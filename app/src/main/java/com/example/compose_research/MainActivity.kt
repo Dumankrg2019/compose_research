@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -22,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose_research.ui.InstagramProfileCard
+import com.example.compose_research.ui.PostCard
 import com.example.compose_research.ui.theme.Compose_researchTheme
 
 class MainActivity : ComponentActivity() {
@@ -33,9 +35,11 @@ class MainActivity : ComponentActivity() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background),
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(8.dp),
                 ) {
-                    InstagramProfileCard()
+                    PostCard()
+                    //InstagramProfileCard()
                     //TestImage()
                 }
             }

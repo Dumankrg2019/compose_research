@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,7 +41,9 @@ class MainActivity : ComponentActivity() {
                         .background(MaterialTheme.colorScheme.background)
                         .padding(8.dp),
                 ) {
-                    PostCard()
+                    //PostCard()
+                    //CustomOutlineButton()
+                    CustomDialog()
                     //InstagramProfileCard()
                     //TestImage()
                 }
@@ -84,4 +89,32 @@ fun TestImage() {
         painter = painterResource(id = R.drawable.insta),
         contentDescription = "Instagram",
         contentScale = ContentScale.Fit)
+}
+
+@Preview
+@Composable
+fun CustomOutlineButton() {
+    OutlinedButton(onClick = {}) {
+        Text(text = "Hello World!")
+    }
+}
+@Preview
+@Composable
+private fun CustomDialog() {
+    AlertDialog(
+        onDismissRequest = {  },
+        title = { Text(text = "Duman hello")},
+        text = { Text(text = "Opan gangam style hop hop olya  gensgta rap is ready to fight with rock gyis")},
+        dismissButton = {
+            TextButton(onClick = { }) {
+                Text(text = "close")
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { }) {
+                Text(text = "Confirm")
+            }
+        }
+
+    )
 }

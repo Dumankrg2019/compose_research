@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose_research.ui.InstagramProfileCard
+import com.example.compose_research.ui.MainScreen
 import com.example.compose_research.ui.PostCard
 import com.example.compose_research.ui.theme.Compose_researchTheme
 
@@ -39,11 +40,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
-                        .padding(8.dp),
+                        //.padding(8.dp),
                 ) {
                     //PostCard()
                     //CustomOutlineButton()
-                    CustomDialog()
+                    //CustomDialog()
+                    MainScreen()
                     //InstagramProfileCard()
                     //TestImage()
                 }

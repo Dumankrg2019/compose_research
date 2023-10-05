@@ -36,9 +36,6 @@ fun ScaffoldSample() {
                 }
             )
         },
-        drawerContent = {
-            Text(text = "Item1")
-        },
       bottomBar = {
           NavigationBar {
               NavigationBarItem(

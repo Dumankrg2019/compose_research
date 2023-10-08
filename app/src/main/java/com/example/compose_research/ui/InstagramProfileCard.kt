@@ -15,10 +15,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,11 +33,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.compose_research.MainViewModel
 import com.example.compose_research.R
 import com.example.compose_research.ui.theme.Compose_researchTheme
 
 @Composable
-fun InstagramProfileCard() {
+fun InstagramProfileCard(
+    viewModel: MainViewModel
+) {
+    val isFollow = viewModel.isFollowing.observeAsState(false)
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -69,7 +77,10 @@ fun InstagramProfileCard() {
                 UserStatistics(title = "Following", value = "76")
 
             }
-            BottomTextAndBtn()
+            BottomTextAndBtn(
+                isFollow = isFollow.value,
+                viewModel = viewModel
+            )
         }
     }
 }
@@ -96,28 +107,33 @@ private fun UserStatistics(
     }
 }
 
-@Preview
-@Composable
-fun PreviewCardLight() {
-    Compose_researchTheme(
-        darkTheme = false
-    ) {
-        InstagramProfileCard()
-    }
-}
+//@Preview
+//@Composable
+//fun PreviewCardLight() {
+//    Compose_researchTheme(
+//        darkTheme = false
+//    ) {
+//        InstagramProfileCard(viewModel = viewModel)
+//    }
+//}
+//
+//@Preview
+//@Composable
+//fun PreviewCardDark() {
+//    Compose_researchTheme(
+//        darkTheme = true
+//    ) {
+//        InstagramProfileCard()
+//    }
+//}
 
-@Preview
 @Composable
-fun PreviewCardDark() {
-    Compose_researchTheme(
-        darkTheme = true
-    ) {
-        InstagramProfileCard()
-    }
-}
-
-@Composable
-fun BottomTextAndBtn() {
+fun BottomTextAndBtn(
+    isFollow: Boolean,
+    viewModel: MainViewModel) {
+//    val isFallowed = remember {
+//        mutableStateOf(false)
+//    }
     Text(
         text = "Instagram",
         fontSize = 32.sp,
@@ -131,6 +147,15 @@ fun BottomTextAndBtn() {
         text = "www.facebook.com/emotional_health",
         fontSize = 12.sp
     )
+    FollowBtn(isFollow) {
+        viewModel.changeFollowingStatus()
+    }
+}
+@Composable
+private fun FollowBtn(
+    isFollow: Boolean,
+    clickListener: () -> Unit
+) {
     Button(
         shape = RoundedCornerShape(
             topStart = 4.dp,
@@ -138,11 +163,23 @@ fun BottomTextAndBtn() {
             bottomEnd = 4.dp,
             bottomStart = 4.dp,
         ),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if(isFollow) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+            } else {
+                MaterialTheme.colorScheme.primary
+            }
+        ),
         onClick = {
-            Log.e("show me", "if you can")
+         clickListener
         })
 
     {
-        Text(text = "Follow", color = Color.White)
+        val text = if(isFollow) {
+            "Unfollow"
+        } else {
+            "Fallow"
+        }
+        Text(text = text, color = Color.White)
     }
 }

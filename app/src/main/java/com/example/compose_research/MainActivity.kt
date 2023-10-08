@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import com.example.compose_research.ui.InstagramProfileCard
 import com.example.compose_research.ui.MainScreen
 import com.example.compose_research.ui.PostCard
@@ -33,6 +34,7 @@ import com.example.compose_research.ui.theme.Compose_researchTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         setContent {
             Compose_researchTheme {
                 // A surface container using the 'background' color from the theme
@@ -45,8 +47,8 @@ class MainActivity : ComponentActivity() {
                     //PostCard()
                     //CustomOutlineButton()
                     //CustomDialog()
-                    MainScreen()
-                    //InstagramProfileCard()
+                    //MainScreen()
+                    InstagramProfileCard(viewModel)
                     //TestImage()
                 }
             }
@@ -66,7 +68,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     Compose_researchTheme {
-       InstagramProfileCard()
+       //InstagramProfileCard()
     }
 }
 

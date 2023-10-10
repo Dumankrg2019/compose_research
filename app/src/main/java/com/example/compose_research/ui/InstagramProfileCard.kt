@@ -20,6 +20,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +53,7 @@ fun InstagramProfileCard(
         ),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
     ) {
+        Log.e("RECOMPOSITION", "Card")
         Column(
             modifier = Modifier
                 .padding(start = 16.dp)
@@ -78,7 +80,7 @@ fun InstagramProfileCard(
 
             }
             BottomTextAndBtn(
-                isFollow = isFollow.value,
+                isFollow = isFollow,
                 viewModel = viewModel
             )
         }
@@ -129,11 +131,12 @@ private fun UserStatistics(
 
 @Composable
 fun BottomTextAndBtn(
-    isFollow: Boolean,
+    isFollow: State<Boolean>,
     viewModel: MainViewModel) {
 //    val isFallowed = remember {
 //        mutableStateOf(false)
 //    }
+    Log.e("RECOMPOSITION", "BottomTextAndBtn")
     Text(
         text = "Instagram",
         fontSize = 32.sp,
@@ -153,9 +156,10 @@ fun BottomTextAndBtn(
 }
 @Composable
 private fun FollowBtn(
-    isFollow: Boolean,
+    isFollow: State<Boolean>,
     clickListener: () -> Unit
 ) {
+    Log.e("RECOMPOSITION", "FollowBtn")
     Button(
         shape = RoundedCornerShape(
             topStart = 4.dp,
@@ -164,18 +168,21 @@ private fun FollowBtn(
             bottomStart = 4.dp,
         ),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if(isFollow) {
+            containerColor = if(isFollow.value) {
                 MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
             } else {
                 MaterialTheme.colorScheme.primary
             }
         ),
         onClick = {
-         clickListener
-        })
+         clickListener()
+        },
+        modifier = Modifier.padding(bottom = 10.dp)
+
+    )
 
     {
-        val text = if(isFollow) {
+        val text = if(isFollow.value) {
             "Unfollow"
         } else {
             "Fallow"

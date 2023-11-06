@@ -1,11 +1,14 @@
 package com.example.compose_research.ui
 
+import android.widget.AdapterView.OnItemClickListener
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,37 +31,51 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose_research.R
+import com.example.compose_research.domain.FeedPost
+import com.example.compose_research.domain.StatisticItem
+import com.example.compose_research.domain.StatisticType
+import java.lang.IllegalStateException
 
-@Preview
+
 @Composable
-fun PostCard() {
+fun PostCard(
+    modifier: Modifier = Modifier,
+    feedPost: FeedPost,
+    onStatisticsItemClickListener: (StatisticItem) -> Unit
+) {
     Card(
-
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier
                 .padding(8.dp)
         ) {
-            PostHeader()
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = stringResource(R.string.template_text))
-            Spacer(modifier = Modifier.width(8.dp))
+            PostHeader(feedPost)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = feedPost.contentText)
+            Spacer(modifier = Modifier.height(8.dp))
             Image(
-                modifier = Modifier.fillMaxWidth(),
-                painter = painterResource(id = R.drawable.post_content_image),
+                modifier = Modifier.fillMaxWidth()
+                    .height(250.dp),
+                painter = painterResource(id = feedPost.contentImageResId),
                 contentDescription = "post",
                 contentScale = ContentScale.FillWidth
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Statistics()
+            Spacer(modifier = Modifier.height(8.dp))
+            Statistics(
+                statistics = feedPost.statistics,
+                onItemClickListener = onStatisticsItemClickListener
+            )
         }
 
     }
 }
 
-@Preview
+
 @Composable
-private fun PostHeader() {
+private fun PostHeader(
+    feedPost: FeedPost
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -68,7 +85,7 @@ private fun PostHeader() {
             modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape),
-            painter = painterResource(id = R.drawable.post_comunity_thumbnail),
+            painter = painterResource(id = feedPost.avatarResId),
             contentDescription = "group image"
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -77,13 +94,13 @@ private fun PostHeader() {
                 .weight(1f)
         ) {
             Text(
-                text = "dev/null",
+                text = feedPost.communityName,
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSecondary
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = "14:00",
+                text = feedPost.publicationDate,
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSecondary
             )
@@ -96,45 +113,72 @@ private fun PostHeader() {
     }
 }
 
-@Preview
+
 @Composable
-private fun Statistics() {
+private fun Statistics(
+    statistics: List<StatisticItem>,
+    onItemClickListener: (StatisticItem) -> Unit
+) {
     Row {
 
         Row(
             modifier = Modifier.weight(1f)
         ) {
+            val viewsItem = statistics.getItemByType(StatisticType.VIEWS)
             IconWithText(
                 iconResId = R.drawable.ic_views_count,
-                text = "967"
+                text = viewsItem.count.toString(),
+                onItemClickListener = {
+                    onItemClickListener(viewsItem)
+                }
             )
         }
         Row(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            val sharesItem = statistics.getItemByType(StatisticType.SHARES)
             IconWithText(
                 iconResId = R.drawable.ic_share,
-                text = "7"
+                text = sharesItem.count.toString(),
+                onItemClickListener = {
+                    onItemClickListener(sharesItem)
+                }
             )
+            val commentsItem = statistics.getItemByType(StatisticType.COMMENTS)
             IconWithText(
                 iconResId = R.drawable.ic_comment,
-                text = "8"
+                text = commentsItem.count.toString(),
+                onItemClickListener = {
+                    onItemClickListener(commentsItem)
+                }
             )
+            val likesItem = statistics.getItemByType(StatisticType.LIKES)
             IconWithText(
                 iconResId = R.drawable.ic_like,
-                text = "10"
+                text = likesItem.count.toString(),
+                onItemClickListener = {
+                    onItemClickListener(likesItem)
+                }
             )
         }
     }
 }
 
+private fun List<StatisticItem>.getItemByType(type:StatisticType)
+: StatisticItem {
+    return this.find { it.type == type } ?: throw IllegalStateException("array is empty")
+}
 @Composable
 private fun IconWithText(
     iconResId: Int,
-    text: String
+    text: String,
+    onItemClickListener: () -> Unit
 ) {
     Row(
+        modifier = Modifier.clickable {
+            onItemClickListener()
+        },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

@@ -1,7 +1,6 @@
 package com.example.compose_research.ui
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,23 +20,41 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.example.compose_research.domain.FeedPost
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun VkNewsMS() {
+fun MainScreen() {
 
-    val feedPost = remember{
-        mutableStateOf(FeedPost())
-    }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val fabIsVisible = remember { mutableStateOf(true) }
 
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+        floatingActionButton = {
+            if (fabIsVisible.value) {
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch {
+                            val action = snackbarHostState.showSnackbar(
+                                message = "This is snackbar",
+                                actionLabel = "Hide FAB",
+                                duration = SnackbarDuration.Long
+                            )
+                            if (action == SnackbarResult.ActionPerformed) {
+                                fabIsVisible.value = false
+                            }
+                        }
+                    }
+                ) {
+                    Icon(Icons.Filled.Favorite, contentDescription = null)
+                }
+            }
+        },
         bottomBar = {
             NavigationBar(
                 modifier = Modifier.fillMaxWidth()
@@ -65,22 +82,6 @@ fun VkNewsMS() {
             }
         }
     ) {
-        PostCard(
-            modifier = Modifier.padding(8.dp),
-            feedPost = feedPost.value,
-            onStatisticsItemClickListener = {newItem->
-                val oldStatistics = feedPost.value.statistics
-                val newStatistics = oldStatistics.toMutableList().apply {
-                    replaceAll{oldItem->
-                        if(oldItem.type == newItem.type) {
-                            oldItem.copy(count = oldItem.count + 1)
-                        } else {
-                            oldItem
-                        }
-                    }
-                }
-                feedPost.value = feedPost.value.copy(statistics = newStatistics)
-            }
-        )
+
     }
 }

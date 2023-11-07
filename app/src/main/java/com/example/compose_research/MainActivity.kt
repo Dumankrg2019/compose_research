@@ -25,6 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.example.compose_research.ui.InstagramProfileCard
+import com.example.compose_research.ui.LazyColumnSample
 import com.example.compose_research.ui.MainScreen
 import com.example.compose_research.ui.VkNewsMS
 import com.example.compose_research.ui.theme.Compose_researchTheme
@@ -47,11 +49,10 @@ class MainActivity : ComponentActivity() {
                     //PostCard()
                     //CustomOutlineButton()
                     //CustomDialog()
-                    VkNewsMS(
-                        viewModel
-                    )
+                    //VkNewsMS(viewModel)
                     //MainScreen()
                    // InstagramProfileCard(viewModel)
+                    LazyColumnSample(viewModel)
                     //TestImage()
                 }
             }

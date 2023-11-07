@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -23,18 +24,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.compose_research.MainViewModel
 import com.example.compose_research.domain.FeedPost
+import com.example.compose_research.domain.StatisticItem
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun VkNewsMS() {
-
-    val feedPost = remember{
-        mutableStateOf(FeedPost())
-    }
+fun VkNewsMS(
+    viewModel: MainViewModel
+) {
 
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
@@ -65,22 +65,19 @@ fun VkNewsMS() {
             }
         }
     ) {
+        val feedPost = viewModel.feedPost.observeAsState(FeedPost())
         PostCard(
             modifier = Modifier.padding(8.dp),
             feedPost = feedPost.value,
-            onStatisticsItemClickListener = {newItem->
-                val oldStatistics = feedPost.value.statistics
-                val newStatistics = oldStatistics.toMutableList().apply {
-                    replaceAll{oldItem->
-                        if(oldItem.type == newItem.type) {
-                            oldItem.copy(count = oldItem.count + 1)
-                        } else {
-                            oldItem
-                        }
-                    }
-                }
-                feedPost.value = feedPost.value.copy(statistics = newStatistics)
-            }
+            onLikeClickListener = {
+                viewModel.updateCount(it)
+            },
+            onViewsClickListener = {
+                viewModel.updateCount(it)
+            },
+            //альтернативный способ записи работы с  лямбдой
+            onCommentClickListener = viewModel::updateCount,
+            onShareClickListener = viewModel::updateCount
         )
     }
 }

@@ -3,6 +3,7 @@ package com.example.compose_research
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -29,9 +30,11 @@ import com.example.compose_research.ui.VkNewsMS
 import com.example.compose_research.ui.theme.Compose_researchTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel by viewModels<MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        //val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         setContent {
             Compose_researchTheme {
                 // A surface container using the 'background' color from the theme
@@ -44,7 +47,9 @@ class MainActivity : ComponentActivity() {
                     //PostCard()
                     //CustomOutlineButton()
                     //CustomDialog()
-                    VkNewsMS()
+                    VkNewsMS(
+                        viewModel
+                    )
                     //MainScreen()
                    // InstagramProfileCard(viewModel)
                     //TestImage()

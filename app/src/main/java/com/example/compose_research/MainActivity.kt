@@ -1,6 +1,7 @@
 package com.example.compose_research
 
 import android.os.Bundle
+import androidx.activity.BackEventCompat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -49,10 +50,10 @@ class MainActivity : ComponentActivity() {
                     //PostCard()
                     //CustomOutlineButton()
                     //CustomDialog()
-                    //VkNewsMS(viewModel)
+                    VkNewsMS(viewModel)
                     //MainScreen()
                    // InstagramProfileCard(viewModel)
-                    LazyColumnSample(viewModel)
+                    //LazyColumnSample(viewModel)
                     //TestImage()
                 }
             }

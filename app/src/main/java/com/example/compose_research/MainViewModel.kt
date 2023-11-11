@@ -13,12 +13,6 @@ class MainViewModel() : ViewModel() {
     private val _isFollowing = MutableLiveData<Boolean>()
     val isFollowing: LiveData<Boolean> = _isFollowing
 
-    private val _selectedNavItem = MutableLiveData<NavigationItem>(NavigationItem.Home)
-    val selectedNavItem: LiveData<NavigationItem> = _selectedNavItem
-
-    fun selectNavItem(item: NavigationItem) {
-        _selectedNavItem.value = item
-    }
 
     private val sourceVkBlocList = mutableListOf<FeedPost>().apply {
         repeat(10) {

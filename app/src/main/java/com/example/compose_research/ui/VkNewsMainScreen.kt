@@ -43,6 +43,7 @@ import com.example.compose_research.MainViewModel
 import com.example.compose_research.domain.FeedPost
 import com.example.compose_research.domain.StatisticItem
 import com.example.compose_research.navigation.AppNavGraph
+import com.example.compose_research.navigation.NavigationState
 import com.example.compose_research.navigation.Screen
 import kotlinx.coroutines.launch
 
@@ -52,6 +53,10 @@ import kotlinx.coroutines.launch
 fun VkNewsMS(
     viewModel: MainViewModel
 ) {
+    val navController = rememberNavController()
+    val navigationState = remember {
+        NavigationState(navController)
+    }
     val navHostController = rememberNavController()
 
     Scaffold(modifier = Modifier.fillMaxWidth(), bottomBar = {
@@ -68,13 +73,7 @@ fun VkNewsMS(
                 NavigationBarItem(
                     selected = currentRoute == item.screen.route,
                     onClick = {
-                        navHostController.navigate(item.screen.route) {
-                            popUpTo(Screen.NewsFeed.route) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        navigationState.navigateTo(item.screen.route)
                               },
                     icon = {
                         Icon(item.icon, contentDescription = null)

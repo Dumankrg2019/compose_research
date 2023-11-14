@@ -45,6 +45,7 @@ import com.example.compose_research.domain.StatisticItem
 import com.example.compose_research.navigation.AppNavGraph
 import com.example.compose_research.navigation.NavigationState
 import com.example.compose_research.navigation.Screen
+import com.example.compose_research.navigation.rememberNavigationState
 import kotlinx.coroutines.launch
 
 
@@ -53,17 +54,13 @@ import kotlinx.coroutines.launch
 fun VkNewsMS(
     viewModel: MainViewModel
 ) {
-    val navController = rememberNavController()
-    val navigationState = remember {
-        NavigationState(navController)
-    }
-    val navHostController = rememberNavController()
+    val navigationState = rememberNavigationState()
 
     Scaffold(modifier = Modifier.fillMaxWidth(), bottomBar = {
         NavigationBar(
             modifier = Modifier.fillMaxWidth()
         ) {
-            val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+            val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
 
             val items = listOf(
@@ -85,7 +82,7 @@ fun VkNewsMS(
         }
     }) { paddingValues ->
         AppNavGraph(
-            navHostController = navHostController,
+            navHostController = navigationState.navHostController,
             homeScreenContent = {
                 HomeScreen(
                     viewModel = viewModel,

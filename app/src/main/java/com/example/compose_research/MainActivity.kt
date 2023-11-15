@@ -16,6 +16,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -26,6 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.example.compose_research.domain.PostComment
+import com.example.compose_research.ui.CommentsScreen
 import com.example.compose_research.ui.InstagramProfileCard
 import com.example.compose_research.ui.LazyColumnSample
 import com.example.compose_research.ui.MainScreen
@@ -50,7 +53,8 @@ class MainActivity : ComponentActivity() {
                     //PostCard()
                     //CustomOutlineButton()
                     //CustomDialog()
-                    VkNewsMS(viewModel)
+                    //VkNewsMS(viewModel)
+                    ListComments(viewModel)
                     //MainScreen()
                    // InstagramProfileCard(viewModel)
                     //LazyColumnSample(viewModel)
@@ -61,6 +65,24 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+@Composable
+fun ListComments(
+    viewModel: MainViewModel
+) {
+    val feedPosts = viewModel.feedPosts.observeAsState(listOf())
+
+    if(feedPosts.value.isNotEmpty()) {
+        val comments = mutableListOf<PostComment>().apply {
+            repeat(20) {
+                add(
+                    PostComment(id = it)
+                )
+            }
+        }
+        CommentsScreen(feedPost = feedPosts.value.get(0), comments = comments)
+    }
+}
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(

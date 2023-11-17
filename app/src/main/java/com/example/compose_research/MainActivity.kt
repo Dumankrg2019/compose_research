@@ -1,7 +1,6 @@
 package com.example.compose_research
 
 import android.os.Bundle
-import androidx.activity.BackEventCompat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -26,13 +25,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
 import com.example.compose_research.domain.PostComment
 import com.example.compose_research.ui.CommentsScreen
-import com.example.compose_research.ui.InstagramProfileCard
-import com.example.compose_research.ui.LazyColumnSample
 import com.example.compose_research.ui.MainScreen
-import com.example.compose_research.ui.VkNewsMS
 import com.example.compose_research.ui.theme.Compose_researchTheme
 
 class MainActivity : ComponentActivity() {
@@ -54,8 +49,8 @@ class MainActivity : ComponentActivity() {
                     //CustomOutlineButton()
                     //CustomDialog()
                     //VkNewsMS(viewModel)
-                    ListComments(viewModel)
-                    //MainScreen()
+                    //ListComments(viewModel)
+                    MainScreen()
                    // InstagramProfileCard(viewModel)
                     //LazyColumnSample(viewModel)
                     //TestImage()
@@ -70,7 +65,7 @@ class MainActivity : ComponentActivity() {
 fun ListComments(
     viewModel: MainViewModel
 ) {
-    val feedPosts = viewModel.feedPosts.observeAsState(listOf())
+    val feedPosts = viewModel.screenState.observeAsState(listOf())
 
     if(feedPosts.value.isNotEmpty()) {
         val comments = mutableListOf<PostComment>().apply {

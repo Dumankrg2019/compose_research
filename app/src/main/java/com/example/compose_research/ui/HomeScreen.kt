@@ -15,6 +15,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.compose_research.MainViewModel
+import com.example.compose_research.domain.FeedPost
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -22,9 +23,33 @@ fun HomeScreen(
     viewModel: MainViewModel,
     paddingValues: PaddingValues
 ) {
-    val feedPosts = viewModel.feedPosts.observeAsState(listOf())
+    val screenState = viewModel.screenState.observeAsState(HomeScreenState.Initial)
 
-    LazyColumn (
+    when (val currentState = screenState.value) {
+        is HomeScreenState.Posts -> {
+            FeedPosts(
+                posts = currentState.posts,
+                viewModel = viewModel,
+                paddingValues = paddingValues
+            )
+        }
+        is HomeScreenState.Comments -> {
+            CommentsScreen(feedPost = currentState.feedPost, comments = currentState.comments)
+        }
+        is HomeScreenState.Initial -> {
+            
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Composable
+private fun FeedPosts(
+    posts: List<FeedPost>,
+    viewModel: MainViewModel,
+    paddingValues: PaddingValues
+) {
+    LazyColumn(
         modifier = Modifier.padding(paddingValues),
         contentPadding = PaddingValues(
             top = 16.dp,
@@ -33,10 +58,10 @@ fun HomeScreen(
             bottom = 72.dp
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
-    ){
-        items(items = feedPosts.value, key = { it.id }) {feedPost->
+    ) {
+        items(items = posts, key = { it.id }) { feedPost ->
             val dismissState = rememberDismissState()
-            if(dismissState.isDismissed(DismissDirection.EndToStart)) {
+            if (dismissState.isDismissed(DismissDirection.EndToStart)) {
                 viewModel.removeVKBloc(feedPost)
             }
             SwipeToDismiss(
@@ -47,17 +72,17 @@ fun HomeScreen(
                 dismissContent = {
                     PostCard(
                         feedPost = feedPost,
-                        onLikeClickListener = {statisticItem->
+                        onLikeClickListener = { statisticItem ->
                             viewModel.updateCount(feedPost, statisticItem)
                         },
-                        onViewsClickListener = {statisticItem->
+                        onViewsClickListener = { statisticItem ->
                             viewModel.updateCount(feedPost, statisticItem)
                         },
                         //альтернативный способ записи работы с  лямбдой
-                        onCommentClickListener = {statisticItem->
+                        onCommentClickListener = { statisticItem ->
                             viewModel.updateCount(feedPost, statisticItem)
                         },
-                        onShareClickListener = {statisticItem->
+                        onShareClickListener = { statisticItem ->
                             viewModel.updateCount(feedPost, statisticItem)
                         }
                     )

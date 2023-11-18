@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.compose_research.domain.FeedPost
 import com.example.compose_research.domain.InstagramModel
+import com.example.compose_research.domain.PostComment
 import com.example.compose_research.domain.StatisticItem
 import com.example.compose_research.ui.HomeScreenState
 import kotlin.random.Random
@@ -13,6 +14,11 @@ class MainViewModel() : ViewModel() {
     private val _isFollowing = MutableLiveData<Boolean>()
     val isFollowing: LiveData<Boolean> = _isFollowing
 
+    private val comments = mutableListOf<PostComment>().apply {
+        repeat(10) {
+            add(PostComment(id = it))
+        }
+    }
 
     private val sourceVkBlocList = mutableListOf<FeedPost>().apply {
         repeat(10) {
@@ -24,6 +30,18 @@ class MainViewModel() : ViewModel() {
 
     private val _screenState = MutableLiveData<HomeScreenState>(initialState)
     val screenState: LiveData<HomeScreenState> = _screenState
+
+    private var savedState: HomeScreenState? = initialState
+    fun showComments(feedPost: FeedPost) {
+        savedState = _screenState.value
+        _screenState.value = HomeScreenState.Comments(
+            feedPost = feedPost,
+            comments = comments)
+    }
+
+    fun closeComments() {
+        _screenState.value = savedState
+    }
 
     private val initialList = mutableListOf<InstagramModel>().apply {
         repeat(100) {
@@ -58,7 +76,11 @@ class MainViewModel() : ViewModel() {
     }
 
     fun updateCount(feedPost: FeedPost, item: StatisticItem) {
-        val oldPosts = screenState.value?.toMutableList() ?: mutableListOf()
+        val currentState = screenState.value
+
+        if(currentState !is HomeScreenState.Posts) return
+
+        val oldPosts = currentState.posts.toMutableList()
         val oldStatistics = feedPost.statistics
         val newStatistics = oldStatistics.toMutableList().apply {
             replaceAll { oldItem ->
@@ -70,7 +92,7 @@ class MainViewModel() : ViewModel() {
             }
         }
         val newFeedPost = feedPost.copy(statistics = newStatistics)
-        _screenState.value = oldPosts.apply {
+        val newPosts = oldPosts.apply {
             replaceAll {
                 if (it.id == newFeedPost.id) {
                     newFeedPost
@@ -79,12 +101,17 @@ class MainViewModel() : ViewModel() {
                 }
             }
         }
+        _screenState.value = HomeScreenState.Posts(posts = newPosts)
     }
 
     fun removeVKBloc(feedPost: FeedPost) {
-        val oldPosts = screenState.value?.toMutableList() ?: mutableListOf()
+
+        val currentState = screenState.value
+        if(currentState !is HomeScreenState.Posts) return
+
+        val oldPosts = currentState.posts.toMutableList()
         oldPosts.remove(feedPost)
-        _screenState.value = oldPosts
+        _screenState.value = HomeScreenState.Posts(posts = oldPosts)
     }
     fun delete(model: InstagramModel) {
         val modifiedList = _models.value?.toMutableList() ?: mutableListOf()

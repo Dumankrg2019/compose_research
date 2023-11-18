@@ -1,5 +1,6 @@
 package com.example.compose_research.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,7 +35,16 @@ fun HomeScreen(
             )
         }
         is HomeScreenState.Comments -> {
-            CommentsScreen(feedPost = currentState.feedPost, comments = currentState.comments)
+            CommentsScreen(
+                feedPost = currentState.feedPost,
+                comments = currentState.comments,
+                onBackPressed = {
+                    viewModel.closeComments()
+                }
+            )
+            BackHandler {
+                viewModel.closeComments()
+            }
         }
         is HomeScreenState.Initial -> {
             
@@ -79,8 +89,8 @@ private fun FeedPosts(
                             viewModel.updateCount(feedPost, statisticItem)
                         },
                         //альтернативный способ записи работы с  лямбдой
-                        onCommentClickListener = { statisticItem ->
-                            viewModel.updateCount(feedPost, statisticItem)
+                        onCommentClickListener = {
+                            viewModel.showComments(feedPost)
                         },
                         onShareClickListener = { statisticItem ->
                             viewModel.updateCount(feedPost, statisticItem)

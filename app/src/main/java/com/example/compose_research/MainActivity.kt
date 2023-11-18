@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.example.compose_research.domain.PostComment
 import com.example.compose_research.ui.CommentsScreen
 import com.example.compose_research.ui.MainScreen
+import com.example.compose_research.ui.VkNewsMS
 import com.example.compose_research.ui.theme.Compose_researchTheme
 
 class MainActivity : ComponentActivity() {
@@ -48,9 +49,9 @@ class MainActivity : ComponentActivity() {
                     //PostCard()
                     //CustomOutlineButton()
                     //CustomDialog()
-                    //VkNewsMS(viewModel)
+                    VkNewsMS(viewModel)
                     //ListComments(viewModel)
-                    MainScreen()
+                    //MainScreen()
                    // InstagramProfileCard(viewModel)
                     //LazyColumnSample(viewModel)
                     //TestImage()
@@ -61,23 +62,23 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@Composable
-fun ListComments(
-    viewModel: MainViewModel
-) {
-    val feedPosts = viewModel.screenState.observeAsState(listOf())
-
-    if(feedPosts.value.isNotEmpty()) {
-        val comments = mutableListOf<PostComment>().apply {
-            repeat(20) {
-                add(
-                    PostComment(id = it)
-                )
-            }
-        }
-        CommentsScreen(feedPost = feedPosts.value.get(0), comments = comments)
-    }
-}
+//@Composable
+//fun ListComments(
+//    viewModel: MainViewModel
+//) {
+//    val feedPosts = viewModel.screenState.observeAsState(listOf())
+//
+//    if(feedPosts.value.isNotEmpty()) {
+//        val comments = mutableListOf<PostComment>().apply {
+//            repeat(20) {
+//                add(
+//                    PostComment(id = it)
+//                )
+//            }
+//        }
+//        CommentsScreen(feedPost = feedPosts.value.get(0), comments = comments)
+//    }
+//}
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(

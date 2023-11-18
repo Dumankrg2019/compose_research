@@ -15,7 +15,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -25,15 +24,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.compose_research.domain.PostComment
-import com.example.compose_research.ui.CommentsScreen
-import com.example.compose_research.ui.MainScreen
 import com.example.compose_research.ui.VkNewsMS
 import com.example.compose_research.ui.theme.Compose_researchTheme
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel by viewModels<MainViewModel>()
+    //private val viewModel by viewModels<NewsFeedViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
@@ -49,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     //PostCard()
                     //CustomOutlineButton()
                     //CustomDialog()
-                    VkNewsMS(viewModel)
+                    VkNewsMS()
                     //ListComments(viewModel)
                     //MainScreen()
                    // InstagramProfileCard(viewModel)

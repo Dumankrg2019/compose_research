@@ -34,10 +34,6 @@ fun VkNewsMS(
 ) {
     val navigationState = rememberNavigationState()
 
-    val commentsToPost: MutableState<FeedPost?> = remember {
-        mutableStateOf(FeedPost())
-    }
-
     Scaffold(modifier = Modifier.fillMaxWidth(), bottomBar = {
         NavigationBar(
             modifier = Modifier.fillMaxWidth()
@@ -73,17 +69,16 @@ fun VkNewsMS(
                 HomeScreen(
                     paddingValues = paddingValues,
                     onCommentClickListener = {
-                        commentsToPost.value = it
-                        navigationState.navigateToComments()
+                        navigationState.navigateToComments(it)
                     }
                 )
             },
-            commentsScreenContent = {
+            commentsScreenContent = {feedPost->
                 CommentsScreen(
                     onBackPressed = {
                         navigationState.navHostController.popBackStack()
                     },
-                    feedPost = commentsToPost.value!!
+                    feedPost = feedPost
                 )
             },
             favouriteScreenContent = { TextCounter("Favourite") },

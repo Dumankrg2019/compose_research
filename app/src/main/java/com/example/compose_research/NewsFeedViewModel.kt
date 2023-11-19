@@ -14,7 +14,12 @@ class NewsFeedViewModel() : ViewModel() {
 
     private val sourceVkBlocList = mutableListOf<FeedPost>().apply {
         repeat(10) {
-            add(FeedPost(id = it))
+            add(
+                FeedPost(
+                    id = it,
+                    contentText = "Con/te*n/nt $it"
+                )
+            )
         }
     }
 

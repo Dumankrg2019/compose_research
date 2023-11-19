@@ -8,8 +8,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.compose_research.domain.FeedPost
-import com.example.compose_research.navigation.Screen.Companion.KEY_CONTENT_TEXT
-import com.example.compose_research.navigation.Screen.Companion.KEY_FEED_POST_ID
+import com.example.compose_research.navigation.Screen.Companion.KEY_FEED_POST
+import com.google.gson.Gson
 
 fun NavGraphBuilder.homeScreenNavGraph(
     newsFeedScreenContent: @Composable () -> Unit,
@@ -25,23 +25,15 @@ fun NavGraphBuilder.homeScreenNavGraph(
         composable(
             route = Screen.Comments.route,
             arguments = listOf(
-                navArgument(KEY_FEED_POST_ID) {
-                    type = NavType.IntType
-                },
-                navArgument(KEY_CONTENT_TEXT) {
+                navArgument(KEY_FEED_POST) {
                     type = NavType.StringType
                 }
             )
         ) {
             //comments/{feed_post_id}
-            val feedPostId = it.arguments?.getInt(KEY_FEED_POST_ID) ?: 0
-            val feedPostText = it.arguments?.getString(KEY_CONTENT_TEXT) ?: "111"
-            commentsScreenContent(
-                FeedPost(
-                    id = feedPostId,
-                    contentText = feedPostText
-                )
-            )
+            val feedPostJson = it.arguments?.getString(KEY_FEED_POST) ?: ""
+            val feedPost = Gson().fromJson(feedPostJson, FeedPost::class.java)
+            commentsScreenContent(feedPost)
         }
     }
 }

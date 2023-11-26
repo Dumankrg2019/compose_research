@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.compose_research.data.mapper.NewsFeedMapper
 import com.example.compose_research.data.network.ApiFactory
+import com.example.compose_research.data.repository.NewsFeedRepository
 import com.example.compose_research.domain.FeedPost
 import com.example.compose_research.domain.InstagramModel
 import com.example.compose_research.domain.StatisticItem
@@ -26,18 +27,15 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     private val _screenState = MutableLiveData<NewsFeedScreenState>(initialState)
     val screenState: LiveData<NewsFeedScreenState> = _screenState
 
-    private val mapper = NewsFeedMapper()
-
+    private val repository = NewsFeedRepository(application)
     init {
         Log.e("newsFeedVM", "start")
         loadRecommendations()
     }
     private fun loadRecommendations() {
         viewModelScope.launch {
-            val storage = VKPreferencesKeyValueStorage(getApplication())
-            val token = VKAccessToken.restore(storage) ?: return@launch
-           val response =  ApiFactory.apiService.loadRecommendations(token.accessToken)
-            val feedPosts = mapper.mapResponseToPosts(response)
+
+            val feedPosts = repository.loadRecommendation()
             _screenState.value = NewsFeedScreenState.Posts(posts = feedPosts)
             Log.e("loadRecommendations", "end ${_screenState.value}")
         }

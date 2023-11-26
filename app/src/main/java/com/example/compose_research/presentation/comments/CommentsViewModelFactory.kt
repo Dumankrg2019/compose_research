@@ -1,4 +1,4 @@
-package com.example.compose_research
+package com.example.compose_research.presentation.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

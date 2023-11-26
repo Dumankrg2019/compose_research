@@ -1,11 +1,10 @@
-package com.example.compose_research
+package com.example.compose_research.presentation.comments
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.compose_research.domain.FeedPost
 import com.example.compose_research.domain.PostComment
-import com.example.compose_research.ui.CommentsScreenState
 
 class CommentsViewModel(
     feedPost: FeedPost

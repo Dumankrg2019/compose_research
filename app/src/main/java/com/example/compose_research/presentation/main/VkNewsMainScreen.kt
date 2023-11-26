@@ -1,4 +1,4 @@
-package com.example.compose_research.ui
+package com.example.compose_research.presentation.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -10,10 +10,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -21,11 +19,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.compose_research.NewsFeedViewModel
-import com.example.compose_research.domain.FeedPost
 import com.example.compose_research.navigation.AppNavGraph
-import com.example.compose_research.navigation.Screen
 import com.example.compose_research.navigation.rememberNavigationState
+import com.example.compose_research.presentation.comments.CommentsScreen
+import com.example.compose_research.presentation.news.NewsFeedScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -66,7 +63,7 @@ fun VkNewsMS(
         AppNavGraph(
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
-                HomeScreen(
+                NewsFeedScreen(
                     paddingValues = paddingValues,
                     onCommentClickListener = {
                         navigationState.navigateToComments(it)

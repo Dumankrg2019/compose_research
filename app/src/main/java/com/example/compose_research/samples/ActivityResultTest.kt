@@ -1,4 +1,4 @@
-package com.example.compose_research.ui
+package com.example.compose_research.samples
 
 import android.net.Uri
 import android.widget.Button

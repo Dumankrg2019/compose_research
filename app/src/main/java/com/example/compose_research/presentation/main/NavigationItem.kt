@@ -1,4 +1,4 @@
-package com.example.compose_research.ui
+package com.example.compose_research.presentation.main
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite

@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.compose_research.NewsFeedViewModel
+import com.example.compose_research.presentation.news.NewsFeedViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)

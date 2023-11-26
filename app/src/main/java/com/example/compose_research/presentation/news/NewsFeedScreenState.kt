@@ -1,4 +1,4 @@
-package com.example.compose_research.ui
+package com.example.compose_research.presentation.news
 
 import com.example.compose_research.domain.FeedPost
 

@@ -1,4 +1,4 @@
-package com.example.compose_research.ui
+package com.example.compose_research.presentation.comments
 
 import com.example.compose_research.domain.FeedPost
 import com.example.compose_research.domain.PostComment

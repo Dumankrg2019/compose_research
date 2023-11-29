@@ -5,16 +5,11 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.compose_research.data.mapper.NewsFeedMapper
-import com.example.compose_research.data.network.ApiFactory
 import com.example.compose_research.data.repository.NewsFeedRepository
 import com.example.compose_research.domain.FeedPost
 import com.example.compose_research.domain.InstagramModel
 import com.example.compose_research.domain.StatisticItem
-import com.vk.api.sdk.VKPreferencesKeyValueStorage
-import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -41,6 +36,14 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun changeLikeStatus(feedPost: FeedPost) {
+        viewModelScope.launch {
+            repository.changeLikeStatus(feedPost)
+
+            //после добавления лайка - получаем акутальную коллекцию
+            _screenState.value = NewsFeedScreenState.Posts(posts = repository.feedPosts)
+        }
+    }
 
     private val initialList = mutableListOf<InstagramModel>().apply {
         repeat(100) {

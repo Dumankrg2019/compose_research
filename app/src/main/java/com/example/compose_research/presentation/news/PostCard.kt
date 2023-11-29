@@ -1,7 +1,6 @@
 package com.example.compose_research.presentation.news
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -74,7 +73,7 @@ fun PostCard(
                 onShareClickListener = onShareClickListener,
                 onViewsClickListener = onViewsClickListener,
                 onCommentClickListener = onCommentClickListener,
-                isFavorite = feedPost.isFavorite
+                isFavorite = feedPost.isLiked
             )
         }
 

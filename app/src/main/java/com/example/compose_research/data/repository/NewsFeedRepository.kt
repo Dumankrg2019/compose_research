@@ -20,17 +20,38 @@ class NewsFeedRepository(application: Application) {
     private val _feedPosts = mutableListOf<FeedPost>()
     val feedPosts: List<FeedPost>
         get() = _feedPosts.toList()
+
+    private var nexFrom: String? = null
     suspend fun loadRecommendation(): List<FeedPost> {
-        val response = apiService.loadRecommendations(getAccessToken())
+        val startFrom = nexFrom
+
+        if(startFrom == null && feedPosts.isNotEmpty()) return feedPosts
+
+        val response = if(startFrom == null) {
+            apiService.loadRecommendations(getAccessToken())
+        } else {
+            apiService.loadRecommendations(getAccessToken(), startFrom)
+        }
+        nexFrom = response.newsFeedContent.nextFrom
         val posts = mapper.mapResponseToPosts(response)
         _feedPosts.addAll(posts)
-        return posts
+        return feedPosts
     }
 
     private fun getAccessToken(): String {
         return token?.accessToken ?: throw IllegalStateException("Token is null")
     }
 
+    suspend fun deletePost(feedPost: FeedPost) {
+        apiService.ignorePost(
+            token = getAccessToken(),
+            ownerId = feedPost.communityId,
+            postId = feedPost.id
+        )
+
+        //удаляем пост с сервера и локально
+        _feedPosts.remove(feedPost)
+    }
     suspend fun changeLikeStatus(feedPost: FeedPost) {
        val response = if(feedPost.isLiked) {
            apiService.deleteLike(

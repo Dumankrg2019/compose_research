@@ -43,8 +43,6 @@ fun PostCard(
     modifier: Modifier = Modifier,
     feedPost: FeedPost,
     onLikeClickListener: (StatisticItem) -> Unit,
-    onShareClickListener: (StatisticItem) -> Unit,
-    onViewsClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit
 ) {
     Card(
@@ -70,8 +68,6 @@ fun PostCard(
             Statistics(
                 statistics = feedPost.statistics,
                 onLikeClickListener = onLikeClickListener,
-                onShareClickListener = onShareClickListener,
-                onViewsClickListener = onViewsClickListener,
                 onCommentClickListener = onCommentClickListener,
                 isFavorite = feedPost.isLiked
             )
@@ -127,8 +123,6 @@ private fun PostHeader(
 private fun Statistics(
     statistics: List<StatisticItem>,
     onLikeClickListener: (StatisticItem) -> Unit,
-    onShareClickListener: (StatisticItem) -> Unit,
-    onViewsClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
     isFavorite: Boolean
 ) {
@@ -140,10 +134,7 @@ private fun Statistics(
             val viewsItem = statistics.getItemByType(StatisticType.VIEWS)
             IconWithText(
                 iconResId = R.drawable.ic_views_count,
-                text = formatStatisticCount(viewsItem.count),
-                onItemClickListener = {
-                    onViewsClickListener(viewsItem)
-                }
+                text = formatStatisticCount(viewsItem.count)
             )
         }
         Row(
@@ -153,10 +144,7 @@ private fun Statistics(
             val sharesItem = statistics.getItemByType(StatisticType.SHARES)
             IconWithText(
                 iconResId = R.drawable.ic_share,
-                text = formatStatisticCount(sharesItem.count),
-                onItemClickListener = {
-                    onShareClickListener(sharesItem)
-                }
+                text = formatStatisticCount(sharesItem.count)
             )
             val commentsItem = statistics.getItemByType(StatisticType.COMMENTS)
             IconWithText(
@@ -181,16 +169,11 @@ private fun Statistics(
 
 
 private fun formatStatisticCount(count: Int): String {
-    Log.e("first count", "first count: $count")
     return if(count > 100000) {
-        //Log.e("format", ">100_000\n${String.format("%sK", (count / 1000))}")
-        Log.e("yes100K", ">100_000\n${String.format("%sK", (count / 1000))}")
-        String.format("%sК", (count / 1000))
+       String.format("%sК", (count / 1000))
     } else if(count > 1000) {
-        Log.e(">1K", "> 1000 \n${String.format("%.1f", (count /1000f))}")
         String.format("%.1fK", (count /1000f))
     } else {
-        Log.e("format", "default \n$count")
         count.toString()
     }
 }
@@ -202,13 +185,18 @@ private fun List<StatisticItem>.getItemByType(type:StatisticType)
 private fun IconWithText(
     iconResId: Int,
     text: String,
-    onItemClickListener: () -> Unit,
+    onItemClickListener: (() -> Unit)? = null,
     tint: Color = MaterialTheme.colorScheme.onSecondary
 ) {
-    Row(
-        modifier = Modifier.clickable {
+    val modifier = if(onItemClickListener == null) {
+        Modifier
+    } else {
+        Modifier.clickable {
             onItemClickListener()
-        },
+        }
+    }
+    Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

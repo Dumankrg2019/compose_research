@@ -4,6 +4,7 @@ import android.app.Application
 import com.example.compose_research.data.mapper.NewsFeedMapper
 import com.example.compose_research.data.network.ApiFactory
 import com.example.compose_research.domain.FeedPost
+import com.example.compose_research.domain.PostComment
 import com.example.compose_research.domain.StatisticItem
 import com.example.compose_research.domain.StatisticType
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
@@ -88,5 +89,14 @@ class NewsFeedRepository(application: Application) {
         val postIndex = _feedPosts.indexOf(feedPost)
 
         _feedPosts[postIndex] = newPost
+    }
+
+    suspend fun getComments(feedPost: FeedPost): List<PostComment> {
+        val comments = apiService.getComments(
+            token = getAccessToken(),
+            ownerId = feedPost.communityId,
+            postId = feedPost.id
+        )
+        return mapper.mapResponseToComments(comments)
     }
 }

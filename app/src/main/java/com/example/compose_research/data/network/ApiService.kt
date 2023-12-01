@@ -1,6 +1,7 @@
 package com.example.compose_research.data.network
 
 import com.example.compose_research.data.model.NewsFeedResponseDto
+import com.example.compose_research.data.model.comments.CommentsResponseDto
 import com.example.compose_research.data.model.likes.LikesCountResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -38,4 +39,11 @@ interface ApiService {
         @Query("owner_id") ownerId: Long,
         @Query("item_id") postId: Long,
     )
+
+    @GET("wall.getComments?v=5.199&extended=1&fields=photo_100")
+    suspend fun getComments(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("item_id") postId: Long,
+    ): CommentsResponseDto
 }

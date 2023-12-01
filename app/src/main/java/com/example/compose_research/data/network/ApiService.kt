@@ -44,6 +44,6 @@ interface ApiService {
     suspend fun getComments(
         @Query("access_token") token: String,
         @Query("owner_id") ownerId: Long,
-        @Query("item_id") postId: Long,
+        @Query("post_id") postId: Long,
     ): CommentsResponseDto
 }

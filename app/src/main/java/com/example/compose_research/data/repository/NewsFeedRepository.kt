@@ -1,14 +1,25 @@
 package com.example.compose_research.data.repository
 
 import android.app.Application
+import androidx.compose.runtime.collectAsState
 import com.example.compose_research.data.mapper.NewsFeedMapper
 import com.example.compose_research.data.network.ApiFactory
 import com.example.compose_research.domain.FeedPost
 import com.example.compose_research.domain.PostComment
 import com.example.compose_research.domain.StatisticItem
 import com.example.compose_research.domain.StatisticType
+import com.example.compose_research.extensions.mergeWith
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 
 class NewsFeedRepository(application: Application) {
     private val storage = VKPreferencesKeyValueStorage(application)
@@ -18,27 +29,47 @@ class NewsFeedRepository(application: Application) {
     private val apiService = ApiFactory.apiService
     private val mapper = NewsFeedMapper()
 
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val nexDataNeededEvents = MutableSharedFlow<Unit>(replay = 1)
+    private val refreshedListFlow = MutableSharedFlow<List<FeedPost>>()
+    private val loadedListFlow = flow{
+        nexDataNeededEvents.emit(Unit)
+        nexDataNeededEvents.collect{
+            val startFrom = nexFrom
+
+            if(startFrom == null && feedPosts.isNotEmpty()){
+                emit(feedPosts)
+                return@collect
+            }
+
+            val response = if(startFrom == null) {
+                apiService.loadRecommendations(getAccessToken())
+            } else {
+                apiService.loadRecommendations(getAccessToken(), startFrom)
+            }
+            nexFrom = response.newsFeedContent.nextFrom
+            val posts = mapper.mapResponseToPosts(response)
+            _feedPosts.addAll(posts)
+            emit(feedPosts)
+        }
+    }
+
     private val _feedPosts = mutableListOf<FeedPost>()
-    val feedPosts: List<FeedPost>
+    private  val feedPosts: List<FeedPost>
         get() = _feedPosts.toList()
 
     private var nexFrom: String? = null
-    suspend fun loadRecommendation(): List<FeedPost> {
-        val startFrom = nexFrom
+     val recommendations: StateFlow<List<FeedPost>> = loadedListFlow
+         .mergeWith(refreshedListFlow)
+         .stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.Lazily,
+        initialValue = feedPosts
+    )
 
-        if(startFrom == null && feedPosts.isNotEmpty()) return feedPosts
-
-        val response = if(startFrom == null) {
-            apiService.loadRecommendations(getAccessToken())
-        } else {
-            apiService.loadRecommendations(getAccessToken(), startFrom)
-        }
-        nexFrom = response.newsFeedContent.nextFrom
-        val posts = mapper.mapResponseToPosts(response)
-        _feedPosts.addAll(posts)
-        return feedPosts
+    suspend fun loadNextData() {
+        nexDataNeededEvents.emit(Unit)
     }
-
     private fun getAccessToken(): String {
         return token?.accessToken ?: throw IllegalStateException("Token is null")
     }
@@ -52,6 +83,7 @@ class NewsFeedRepository(application: Application) {
 
         //удаляем пост с сервера и локально
         _feedPosts.remove(feedPost)
+        refreshedListFlow.emit(feedPosts)
     }
     suspend fun changeLikeStatus(feedPost: FeedPost) {
        val response = if(feedPost.isLiked) {
@@ -89,6 +121,7 @@ class NewsFeedRepository(application: Application) {
         val postIndex = _feedPosts.indexOf(feedPost)
 
         _feedPosts[postIndex] = newPost
+        refreshedListFlow.emit(feedPosts)
     }
 
     suspend fun getComments(feedPost: FeedPost): List<PostComment> {

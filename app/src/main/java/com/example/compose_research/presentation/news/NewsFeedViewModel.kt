@@ -10,7 +10,14 @@ import com.example.compose_research.data.repository.NewsFeedRepository
 import com.example.compose_research.domain.FeedPost
 import com.example.compose_research.domain.InstagramModel
 import com.example.compose_research.domain.StatisticItem
+import com.example.compose_research.extensions.mergeWith
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -18,31 +25,34 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
 
 
 
-    private val initialState = NewsFeedScreenState.Initial
-
-    private val _screenState = MutableLiveData<NewsFeedScreenState>(initialState)
-    val screenState: LiveData<NewsFeedScreenState> = _screenState
-
     private val repository = NewsFeedRepository(application)
-    init {
-        Log.e("newsFeedVM", "start")
-        _screenState.value = NewsFeedScreenState.Loading
-        loadRecommendations()
-    }
-    private fun loadRecommendations() {
-        viewModelScope.launch {
-            val feedPosts = repository.loadRecommendation()
-            _screenState.value = NewsFeedScreenState.Posts(posts = feedPosts)
-            //Log.e("loadRecommendations", "end ${_screenState.value}")
+    private val recommendationFlow = repository.recommendations
+
+    private val loadNextDataFlow = MutableSharedFlow<NewsFeedScreenState>()
+
+
+    val screenState =   recommendationFlow
+        .filter { it.isNotEmpty() }
+        .map {
+            NewsFeedScreenState.Posts(posts = it) as NewsFeedScreenState
         }
-    }
+        .onStart { emit(NewsFeedScreenState.Loading) }
+        .mergeWith(loadNextDataFlow)
+
+
+
 
     fun loadNextRecommendations() {
         Log.e("nexRecommendation", "oooopppssss")
-        _screenState.value = NewsFeedScreenState.Posts(
-            posts = repository.feedPosts, nextDataIsLoading = true
-        )
-        loadRecommendations()
+        viewModelScope.launch {
+            loadNextDataFlow.emit(
+                NewsFeedScreenState.Posts(
+                    posts = recommendationFlow.value,
+                    nextDataIsLoading = true
+                )
+            )
+            repository.loadNextData()
+        }
     }
 
     fun changeLikeStatus(feedPost: FeedPost) {
@@ -50,7 +60,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
             repository.changeLikeStatus(feedPost)
 
             //после добавления лайка - получаем акутальную коллекцию
-            _screenState.value = NewsFeedScreenState.Posts(posts = repository.feedPosts)
+
         }
     }
 
@@ -85,7 +95,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     fun removeVKBloc(feedPost: FeedPost) {
         viewModelScope.launch {
             repository.deletePost(feedPost)
-            _screenState.value = NewsFeedScreenState.Posts(posts = repository.feedPosts)
+
         }
     }
     fun delete(model: InstagramModel) {

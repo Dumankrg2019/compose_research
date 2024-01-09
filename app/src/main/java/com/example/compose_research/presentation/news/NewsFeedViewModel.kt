@@ -11,6 +11,7 @@ import com.example.compose_research.domain.FeedPost
 import com.example.compose_research.domain.InstagramModel
 import com.example.compose_research.domain.StatisticItem
 import com.example.compose_research.extensions.mergeWith
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.buffer
@@ -29,6 +30,10 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     private val recommendationFlow = repository.recommendations
 
     private val loadNextDataFlow = MutableSharedFlow<NewsFeedScreenState>()
+
+    private val exceptionHandler = CoroutineExceptionHandler{_, _ ->
+        Log.e("NewsFeedViewModel", "Exception caught by exceptionHandler")
+    }
 
 
     val screenState =   recommendationFlow
@@ -56,7 +61,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun changeLikeStatus(feedPost: FeedPost) {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             repository.changeLikeStatus(feedPost)
 
             //после добавления лайка - получаем акутальную коллекцию
@@ -93,7 +98,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
 
 
     fun removeVKBloc(feedPost: FeedPost) {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             repository.deletePost(feedPost)
 
         }

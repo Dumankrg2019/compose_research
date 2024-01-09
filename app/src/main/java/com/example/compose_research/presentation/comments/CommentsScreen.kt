@@ -1,6 +1,7 @@
 package com.example.compose_research.presentation.comments
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,7 +46,7 @@ import com.example.compose_research.domain.PostComment
 @Composable
 fun CommentsScreen(
     onBackPressed: () -> Unit,
-    feedPost: FeedPost
+    feedPost: FeedPost,
 ) {
     val viewModel: CommentsViewModel = viewModel(
         factory = CommentsViewModelFactory(
@@ -52,7 +54,7 @@ fun CommentsScreen(
             LocalContext.current.applicationContext as Application
         )
     )
-    val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
+    val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
     val currentState = screenState.value
 
     if (currentState is CommentsScreenState.Comments) {
@@ -74,16 +76,14 @@ fun CommentsScreen(
             }
         ) { paddingValues ->
             LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues),
+                modifier = Modifier.padding(paddingValues),
                 contentPadding = PaddingValues(
                     top = 16.dp,
                     start = 8.dp,
                     end = 8.dp,
-                    bottom = 72.dp,
+                    bottom = 72.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
-
             ) {
                 items(
                     items = currentState.comments,

@@ -12,6 +12,7 @@ import java.util.Locale
 import kotlin.math.absoluteValue
 
 class NewsFeedMapper {
+
     fun mapResponseToPosts(responseDto: NewsFeedResponseDto): List<FeedPost> {
         val result = mutableListOf<FeedPost>()
 
@@ -20,7 +21,6 @@ class NewsFeedMapper {
 
         for (post in posts) {
             val group = groups.find { it.id == post.communityId.absoluteValue } ?: break
-
             val feedPost = FeedPost(
                 id = post.id,
                 communityId = post.communityId,
@@ -44,15 +44,11 @@ class NewsFeedMapper {
 
     fun mapResponseToComments(response: CommentsResponseDto): List<PostComment> {
         val result = mutableListOf<PostComment>()
-
         val comments = response.content.comments
         val profiles = response.content.profiles
-
-        for(comment in comments) {
-            if(comment.text.isBlank()) continue
-
-            val author = profiles.firstOrNull{ it.id == comment.id} ?: continue
-
+        for (comment in comments) {
+            if (comment.text.isBlank()) continue
+            val author = profiles.firstOrNull { it.id == comment.authorId.toLong() } ?: continue
             val postComment = PostComment(
                 id = comment.id,
                 authorName = "${author.firstName} ${author.lastName}",
@@ -62,12 +58,11 @@ class NewsFeedMapper {
             )
             result.add(postComment)
         }
-
         return result
     }
 
-    private fun mapTimestampToDate(timestamp: Long): String{
-        val date = Date(timestamp*1000)
+    private fun mapTimestampToDate(timestamp: Long): String {
+        val date = Date(timestamp * 1000)
         return SimpleDateFormat("d MMMM yyyy, hh:mm", Locale.getDefault()).format(date)
     }
 }

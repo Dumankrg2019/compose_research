@@ -35,12 +35,17 @@ class NewsFeedRepository(application: Application) {
     private val mapper = NewsFeedMapper()
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
-    private val nexDataNeededEvents = MutableSharedFlow<Unit>(replay = 1)
+    private val nextDataNeededEvents = MutableSharedFlow<Unit>(replay = 1)
     private val refreshedListFlow = MutableSharedFlow<List<FeedPost>>()
+
+    private var nextFrom: String? = null
+
+
+
     private val loadedListFlow = flow {
-        nexDataNeededEvents.emit(Unit)
-        nexDataNeededEvents.collect {
-            val startFrom = nexFrom
+        nextDataNeededEvents.emit(Unit)
+        nextDataNeededEvents.collect {
+            val startFrom = nextFrom
 
             if (startFrom == null && feedPosts.isNotEmpty()) {
                 emit(feedPosts)
@@ -52,30 +57,28 @@ class NewsFeedRepository(application: Application) {
             } else {
                 apiService.loadRecommendations(getAccessToken(), startFrom)
             }
-            nexFrom = response.newsFeedContent.nextFrom
+            nextFrom = response.newsFeedContent.nextFrom
             val posts = mapper.mapResponseToPosts(response)
             _feedPosts.addAll(posts)
             emit(feedPosts)
         }
-
     }.retry {
-            delay(RETRY_TIMEOUT_MILLIS)
-            true
-        }
+        delay(RETRY_TIMEOUT_MILLIS)
+        true
+    }
 
 
     private val _feedPosts = mutableListOf<FeedPost>()
     private val feedPosts: List<FeedPost>
         get() = _feedPosts.toList()
 
-    private var nexFrom: String? = null
     val recommendations: StateFlow<List<FeedPost>> =
         loadedListFlow.mergeWith(refreshedListFlow).stateIn(
             scope = coroutineScope, started = SharingStarted.Lazily, initialValue = feedPosts
         )
 
     suspend fun loadNextData() {
-        nexDataNeededEvents.emit(Unit)
+        nextDataNeededEvents.emit(Unit)
     }
 
     private fun getAccessToken(): String {
@@ -127,15 +130,17 @@ class NewsFeedRepository(application: Application) {
         refreshedListFlow.emit(feedPosts)
     }
 
-     fun getComments(feedPost: FeedPost): Flow<List<PostComment>> = flow{
+    fun getComments(feedPost: FeedPost): Flow<List<PostComment>> = flow {
         val comments = apiService.getComments(
-            token = getAccessToken(), ownerId = feedPost.communityId, postId = feedPost.id
+            token = getAccessToken(),
+            ownerId = feedPost.communityId,
+            postId = feedPost.id
         )
         emit(mapper.mapResponseToComments(comments))
     }.retry {
         delay(RETRY_TIMEOUT_MILLIS)
-         true
-     }
+        true
+    }
 
     companion object {
         private const val RETRY_TIMEOUT_MILLIS = 3000L

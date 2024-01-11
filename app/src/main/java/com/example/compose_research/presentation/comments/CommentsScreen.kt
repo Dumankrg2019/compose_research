@@ -56,8 +56,9 @@ fun CommentsScreen(
     )
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
     val currentState = screenState.value
-
+    Log.e("comments", "comments show")
     if (currentState is CommentsScreenState.Comments) {
+        Log.e("comments", "comments show - $currentState")
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -75,6 +76,7 @@ fun CommentsScreen(
                 )
             }
         ) { paddingValues ->
+            Log.e("comments", "before paddingValues")
             LazyColumn(
                 modifier = Modifier.padding(paddingValues),
                 contentPadding = PaddingValues(
@@ -90,6 +92,7 @@ fun CommentsScreen(
                     key = { it.id }
                 ) { comment ->
                     CommentItem(comment = comment)
+                    Log.e("comments", "LazyColumn - items")
                 }
             }
         }
@@ -100,6 +103,7 @@ fun CommentsScreen(
 private fun CommentItem(
     comment: PostComment
 ) {
+    Log.e("comments", "Into CommentItem")
     Row(
         modifier = Modifier
             .fillMaxWidth()

@@ -16,7 +16,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.compose_research.R
-import com.example.compose_research.ui.MainScreen
+import com.example.compose_research.domain.AuthState
 import com.example.compose_research.ui.theme.Compose_researchTheme
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
@@ -44,11 +44,11 @@ class MainActivity : ComponentActivity() {
             Compose_researchTheme {
                 // A surface container using the 'background' color from the theme
                 val viewModel: MainViewModel = viewModel()
-                val authState = viewModel.authState.observeAsState(AuthState.Initial)
+                val authState = viewModel.authState.collectAsState(AuthState.Initial)
                 val launcher = rememberLauncherForActivityResult(
                     contract = VK.getVKAuthActivityResultContract(),
                 ) {
-                    viewModel.performAuthResult(it)
+                    viewModel.performAuthResult()
                 }
                 Box(
                     modifier = Modifier

@@ -6,17 +6,17 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.compose_research.data.repository.NewsFeedRepository
-import com.example.compose_research.domain.FeedPost
-import com.example.compose_research.domain.InstagramModel
-import com.example.compose_research.domain.StatisticItem
+import com.example.compose_research.data.repository.NewsFeedRepositoryImpl
+import com.example.compose_research.domain.entity.FeedPost
+import com.example.compose_research.domain.entity.InstagramModel
+import com.example.compose_research.domain.usecases.ChangeLikeStatusUseCase
+import com.example.compose_research.domain.usecases.DeletePostUseCase
+import com.example.compose_research.domain.usecases.GetRecommendationsUseCase
+import com.example.compose_research.domain.usecases.LoadNextDataUseCase
 import com.example.compose_research.extensions.mergeWith
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -26,8 +26,14 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
 
 
 
-    private val repository = NewsFeedRepository(application)
-    private val recommendationFlow = repository.recommendations
+    private val repository = NewsFeedRepositoryImpl(application)
+
+    private val getRecommendationsUseCase = GetRecommendationsUseCase(repository)
+    private val loadNextDataUseCase = LoadNextDataUseCase(repository)
+    private val changeLikeStatusUseCase = ChangeLikeStatusUseCase(repository)
+    private val deletePostUseCase = DeletePostUseCase(repository)
+
+    private val recommendationFlow = getRecommendationsUseCase()
 
     private val loadNextDataFlow = MutableSharedFlow<NewsFeedScreenState>()
 
@@ -56,13 +62,13 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
                     nextDataIsLoading = true
                 )
             )
-            repository.loadNextData()
+           loadNextDataUseCase()
         }
     }
 
     fun changeLikeStatus(feedPost: FeedPost) {
         viewModelScope.launch(exceptionHandler) {
-            repository.changeLikeStatus(feedPost)
+           changeLikeStatusUseCase(feedPost)
 
             //после добавления лайка - получаем акутальную коллекцию
 
@@ -99,7 +105,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
 
     fun removeVKBloc(feedPost: FeedPost) {
         viewModelScope.launch(exceptionHandler) {
-            repository.deletePost(feedPost)
+           deletePostUseCase(feedPost)
 
         }
     }

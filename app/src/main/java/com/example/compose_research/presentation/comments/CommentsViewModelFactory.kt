@@ -3,7 +3,7 @@ package com.example.compose_research.presentation.comments
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.compose_research.domain.FeedPost
+import com.example.compose_research.domain.entity.FeedPost
 
 class CommentsViewModelFactory(
     private val feedPost: FeedPost,

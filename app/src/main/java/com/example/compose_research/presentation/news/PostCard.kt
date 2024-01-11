@@ -1,6 +1,5 @@
 package com.example.compose_research.presentation.news
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,9 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.compose_research.R
-import com.example.compose_research.domain.FeedPost
-import com.example.compose_research.domain.StatisticItem
-import com.example.compose_research.domain.StatisticType
+import com.example.compose_research.domain.entity.FeedPost
+import com.example.compose_research.domain.entity.StatisticItem
+import com.example.compose_research.domain.entity.StatisticType
 import com.example.compose_research.ui.theme.DarkRed
 import java.lang.IllegalStateException
 
@@ -177,7 +176,7 @@ private fun formatStatisticCount(count: Int): String {
         count.toString()
     }
 }
-private fun List<StatisticItem>.getItemByType(type:StatisticType)
+private fun List<StatisticItem>.getItemByType(type: StatisticType)
 : StatisticItem {
     return this.find { it.type == type } ?: throw IllegalStateException("array is empty")
 }

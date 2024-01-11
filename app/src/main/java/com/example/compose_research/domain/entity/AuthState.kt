@@ -1,4 +1,4 @@
-package com.example.compose_research.domain
+package com.example.compose_research.domain.entity
 
 sealed class AuthState{
     object Authorized: AuthState()

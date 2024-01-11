@@ -2,10 +2,10 @@ package com.example.compose_research.data.mapper
 
 import com.example.compose_research.data.model.NewsFeedResponseDto
 import com.example.compose_research.data.model.comments.CommentsResponseDto
-import com.example.compose_research.domain.FeedPost
-import com.example.compose_research.domain.PostComment
-import com.example.compose_research.domain.StatisticItem
-import com.example.compose_research.domain.StatisticType
+import com.example.compose_research.domain.entity.FeedPost
+import com.example.compose_research.domain.entity.PostComment
+import com.example.compose_research.domain.entity.StatisticItem
+import com.example.compose_research.domain.entity.StatisticType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

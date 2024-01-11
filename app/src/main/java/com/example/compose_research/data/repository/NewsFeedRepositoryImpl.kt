@@ -3,12 +3,13 @@ package com.example.compose_research.data.repository
 import android.app.Application
 import com.example.compose_research.data.mapper.NewsFeedMapper
 import com.example.compose_research.data.network.ApiFactory
-import com.example.compose_research.domain.FeedPost
-import com.example.compose_research.domain.PostComment
-import com.example.compose_research.domain.StatisticItem
-import com.example.compose_research.domain.StatisticType
+import com.example.compose_research.domain.entity.FeedPost
+import com.example.compose_research.domain.entity.PostComment
+import com.example.compose_research.domain.entity.StatisticItem
+import com.example.compose_research.domain.entity.StatisticType
 import com.example.compose_research.extensions.mergeWith
-import com.example.compose_research.domain.AuthState
+import com.example.compose_research.domain.entity.AuthState
+import com.example.compose_research.domain.respository.NewsFeedRepository
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +23,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 
-class NewsFeedRepository(application: Application) {
+class NewsFeedRepositoryImpl(application: Application):NewsFeedRepository {
     private val storage = VKPreferencesKeyValueStorage(application)
     private val token
         get() = VKAccessToken.restore(storage)
@@ -39,7 +40,7 @@ class NewsFeedRepository(application: Application) {
 
     private val checkAuthStateEvents = MutableSharedFlow<Unit>(replay = 1)
 
-    val authStateFlow = flow {
+    private val authStateFlow = flow {
         checkAuthStateEvents.emit(Unit)
         checkAuthStateEvents.collect{
             val currentToken = token
@@ -55,7 +56,7 @@ class NewsFeedRepository(application: Application) {
     )
 
 
-    suspend fun checkAuthState() {
+    override suspend fun checkAuthState() {
         checkAuthStateEvents.emit(Unit)
     }
 
@@ -89,12 +90,12 @@ class NewsFeedRepository(application: Application) {
     private val feedPosts: List<FeedPost>
         get() = _feedPosts.toList()
 
-    val recommendations: StateFlow<List<FeedPost>> =
+    private val recommendations: StateFlow<List<FeedPost>> =
         loadedListFlow.mergeWith(refreshedListFlow).stateIn(
             scope = coroutineScope, started = SharingStarted.Lazily, initialValue = feedPosts
         )
 
-    suspend fun loadNextData() {
+    override suspend fun loadNextData() {
         nextDataNeededEvents.emit(Unit)
     }
 
@@ -102,7 +103,7 @@ class NewsFeedRepository(application: Application) {
         return token?.accessToken ?: throw IllegalStateException("Token is null")
     }
 
-    suspend fun deletePost(feedPost: FeedPost) {
+    override suspend fun deletePost(feedPost: FeedPost) {
         apiService.ignorePost(
             token = getAccessToken(), ownerId = feedPost.communityId, postId = feedPost.id
         )
@@ -112,7 +113,7 @@ class NewsFeedRepository(application: Application) {
         refreshedListFlow.emit(feedPosts)
     }
 
-    suspend fun changeLikeStatus(feedPost: FeedPost) {
+    override suspend fun changeLikeStatus(feedPost: FeedPost) {
         val response = if (feedPost.isLiked) {
             apiService.deleteLike(
                 token = getAccessToken(), ownerId = feedPost.communityId, postId = feedPost.id
@@ -147,7 +148,11 @@ class NewsFeedRepository(application: Application) {
         refreshedListFlow.emit(feedPosts)
     }
 
-    fun getComments(feedPost: FeedPost): Flow<List<PostComment>> = flow {
+    override fun getAuthStateFlow(): StateFlow<AuthState> = authStateFlow
+
+    override fun getRecommendations(): StateFlow<List<FeedPost>> = recommendations
+
+    override fun getComments(feedPost: FeedPost): StateFlow<List<PostComment>> = flow {
         val comments = apiService.getComments(
             token = getAccessToken(),
             ownerId = feedPost.communityId,
@@ -157,7 +162,11 @@ class NewsFeedRepository(application: Application) {
     }.retry {
         delay(RETRY_TIMEOUT_MILLIS)
         true
-    }
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.Lazily,
+        initialValue = listOf()
+    )
 
     companion object {
         private const val RETRY_TIMEOUT_MILLIS = 3000L

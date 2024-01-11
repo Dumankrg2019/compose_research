@@ -1,7 +1,7 @@
 package com.example.compose_research.navigation
 
 import android.net.Uri
-import com.example.compose_research.domain.FeedPost
+import com.example.compose_research.domain.entity.FeedPost
 import com.google.gson.Gson
 
 sealed class Screen(

@@ -1,6 +1,6 @@
 package com.example.compose_research.presentation.news
 
-import com.example.compose_research.domain.FeedPost
+import com.example.compose_research.domain.entity.FeedPost
 
 sealed class NewsFeedScreenState {
 

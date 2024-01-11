@@ -1,4 +1,4 @@
-package com.example.compose_research.domain
+package com.example.compose_research.domain.entity
 
 data class StatisticItem(
     val type: StatisticType,

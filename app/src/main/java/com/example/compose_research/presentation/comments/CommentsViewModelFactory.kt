@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.compose_research.domain.entity.FeedPost
 
-class CommentsViewModelFactory(
-    private val feedPost: FeedPost,
-    private val application: Application
-): ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CommentsViewModel(feedPost, application) as T
-    }
-}
+//class CommentsViewModelFactory(
+//    private val feedPost: FeedPost,
+//    private val application: Application
+//): ViewModelProvider.Factory {
+//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//        return CommentsViewModel(feedPost, application) as T
+//    }
+//}

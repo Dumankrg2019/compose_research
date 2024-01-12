@@ -10,11 +10,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -29,21 +29,32 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.compose_research.R
 import com.example.compose_research.domain.entity.AuthState
+import com.example.compose_research.presentation.NewsFeedApplication
+import com.example.compose_research.presentation.ViewModelFactory
 import com.example.compose_research.ui.theme.Compose_researchTheme
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
+import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (application as NewsFeedApplication).component
+    }
+
     //private val viewModel by viewModels<NewsFeedViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         //val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         setContent {
             Compose_researchTheme {
                 // A surface container using the 'background' color from the theme
-                val viewModel: MainViewModel = viewModel()
+                val viewModel: MainViewModel = viewModel(factory = viewModelFactory)
                 val authState = viewModel.authState.collectAsState(AuthState.Initial)
                 val launcher = rememberLauncherForActivityResult(
                     contract = VK.getVKAuthActivityResultContract(),
@@ -53,7 +64,7 @@ class MainActivity : ComponentActivity() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
+                        .background(MaterialTheme.colors.background)
                         //.padding(8.dp),
                 ) {
                     //PostCard()
@@ -62,7 +73,7 @@ class MainActivity : ComponentActivity() {
 
                     when(authState.value) {
                         is AuthState.Authorized -> {
-                            VkNewsMS() //MainScreen()
+                            VkNewsMS(viewModelFactory) //MainScreen()
                         }
                         is AuthState.NotAuthorized -> {
                             LoginScreen { launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS)) }

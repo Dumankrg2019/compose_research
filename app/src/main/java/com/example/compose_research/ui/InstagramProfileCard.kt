@@ -13,11 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,12 +40,12 @@ fun InstagramProfileCard(
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colors.background),
         shape = RoundedCornerShape(
             topStart = 4.dp,
             topEnd = 4.dp
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+        border = BorderStroke(1.dp, MaterialTheme.colors.onBackground)
     ) {
         Log.e("RECOMPOSITION", "Card")
         Column(
@@ -166,10 +166,10 @@ private fun FollowBtn(
             bottomStart = 4.dp,
         ),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if(model.isFollowed) {
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+            backgroundColor = if(model.isFollowed) {
+                MaterialTheme.colors.primary.copy(alpha = 0.5f)
             } else {
-                MaterialTheme.colorScheme.primary
+                MaterialTheme.colors.primary
             }
         ),
         onClick = {

@@ -1,19 +1,18 @@
 package com.example.compose_research.ui
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.SnackbarResult
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import com.example.compose_research.presentation.main.NavigationItem
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun MainScreen() {
 
@@ -57,7 +56,7 @@ fun MainScreen() {
             }
         },
         bottomBar = {
-            NavigationBar(
+            BottomNavigation(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 val selectedItemPosition = remember {
@@ -69,7 +68,7 @@ fun MainScreen() {
                     NavigationItem.Profile
                 )
                 items.forEachIndexed { index, item ->
-                    NavigationBarItem(
+                    BottomNavigationItem(
                         selected = selectedItemPosition.value == index,
                         onClick = { selectedItemPosition.value = index },
                         icon = {

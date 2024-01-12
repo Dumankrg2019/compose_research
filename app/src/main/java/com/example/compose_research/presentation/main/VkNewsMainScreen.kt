@@ -3,12 +3,11 @@ package com.example.compose_research.presentation.main
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,18 +20,20 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.compose_research.navigation.AppNavGraph
 import com.example.compose_research.navigation.rememberNavigationState
+import com.example.compose_research.presentation.ViewModelFactory
 import com.example.compose_research.presentation.comments.CommentsScreen
 import com.example.compose_research.presentation.news.NewsFeedScreen
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+
 @Composable
 fun VkNewsMS(
+    viewModelFactory: ViewModelFactory
 ) {
     val navigationState = rememberNavigationState()
 
     Scaffold(modifier = Modifier.fillMaxWidth(), bottomBar = {
-        NavigationBar(
+        BottomNavigation(
             modifier = Modifier.fillMaxWidth()
         ) {
             val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
@@ -44,7 +45,7 @@ fun VkNewsMS(
                 val selected = navBackStackEntry?.destination?.hierarchy?.any{
                     it.route == item.screen.route
                 } ?: false
-                NavigationBarItem(
+                BottomNavigationItem(
                     selected = selected,
                     onClick = {
                         if(!selected) {
@@ -64,6 +65,7 @@ fun VkNewsMS(
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
                 NewsFeedScreen(
+                    viewModelFactory = viewModelFactory,
                     paddingValues = paddingValues,
                     onCommentClickListener = {
                         navigationState.navigateToComments(it)
@@ -72,6 +74,7 @@ fun VkNewsMS(
             },
             commentsScreenContent = {feedPost->
                 CommentsScreen(
+                    viewModelFactory = viewModelFactory,
                     onBackPressed = {
                         navigationState.navHostController.popBackStack()
                     },

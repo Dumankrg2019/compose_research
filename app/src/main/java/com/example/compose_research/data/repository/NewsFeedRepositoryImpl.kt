@@ -3,6 +3,7 @@ package com.example.compose_research.data.repository
 import android.app.Application
 import com.example.compose_research.data.mapper.NewsFeedMapper
 import com.example.compose_research.data.network.ApiFactory
+import com.example.compose_research.data.network.ApiService
 import com.example.compose_research.domain.entity.FeedPost
 import com.example.compose_research.domain.entity.PostComment
 import com.example.compose_research.domain.entity.StatisticItem
@@ -22,15 +23,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class NewsFeedRepositoryImpl(application: Application):NewsFeedRepository {
-    private val storage = VKPreferencesKeyValueStorage(application)
+class NewsFeedRepositoryImpl @Inject constructor(
+    private val storage: VKPreferencesKeyValueStorage,
+    private val apiService: ApiService,
+    private val mapper: NewsFeedMapper
+
+)
+    : NewsFeedRepository {
+   // private val storage = VKPreferencesKeyValueStorage(application)
     private val token
         get() = VKAccessToken.restore(storage)
 
 
-    private val apiService = ApiFactory.apiService
-    private val mapper = NewsFeedMapper()
+   // private val apiService = ApiFactory.apiService
+  //  private val mapper = NewsFeedMapper()
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
     private val nextDataNeededEvents = MutableSharedFlow<Unit>(replay = 1)
@@ -42,10 +50,10 @@ class NewsFeedRepositoryImpl(application: Application):NewsFeedRepository {
 
     private val authStateFlow = flow {
         checkAuthStateEvents.emit(Unit)
-        checkAuthStateEvents.collect{
+        checkAuthStateEvents.collect {
             val currentToken = token
             val loggedIn = currentToken != null && currentToken.isValid
-            val authState = if(loggedIn) AuthState.Authorized else AuthState.NotAuthorized
+            val authState = if (loggedIn) AuthState.Authorized else AuthState.NotAuthorized
             emit(authState)
         }
 

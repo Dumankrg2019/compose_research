@@ -12,12 +12,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -100,19 +100,19 @@ private fun PostHeader(
             Text(
                 text = feedPost.communityName,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSecondary
+                color = MaterialTheme.colors.onSecondary
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = feedPost.publicationDate,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSecondary
+                color = MaterialTheme.colors.onSecondary
             )
         }
         Icon(
             imageVector = Icons.Rounded.MoreVert,
             contentDescription = "settings",
-            tint = MaterialTheme.colorScheme.onSecondary
+            tint = MaterialTheme.colors.onSecondary
         )
     }
 }
@@ -160,7 +160,7 @@ private fun Statistics(
                 onItemClickListener = {
                     onLikeClickListener(likesItem)
                 },
-                tint = if(isFavorite) DarkRed else MaterialTheme.colorScheme.onSecondary
+                tint = if(isFavorite) DarkRed else MaterialTheme.colors.onSecondary
             )
         }
     }
@@ -185,7 +185,7 @@ private fun IconWithText(
     iconResId: Int,
     text: String,
     onItemClickListener: (() -> Unit)? = null,
-    tint: Color = MaterialTheme.colorScheme.onSecondary
+    tint: Color = MaterialTheme.colors.onSecondary
 ) {
     val modifier = if(onItemClickListener == null) {
         Modifier
@@ -206,6 +206,6 @@ private fun IconWithText(
             tint = tint
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Text(text = text, color = MaterialTheme.colorScheme.onSecondary)
+        Text(text = text, color = MaterialTheme.colors.onSecondary)
     }
 }

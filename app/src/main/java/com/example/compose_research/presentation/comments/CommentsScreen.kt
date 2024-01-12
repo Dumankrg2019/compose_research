@@ -15,15 +15,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -37,18 +36,17 @@ import coil.compose.AsyncImage
 import com.example.compose_research.R
 import com.example.compose_research.domain.entity.FeedPost
 import com.example.compose_research.domain.entity.PostComment
+import com.example.compose_research.presentation.ViewModelFactory
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun CommentsScreen(
+    viewModelFactory: ViewModelFactory,
     onBackPressed: () -> Unit,
     feedPost: FeedPost,
 ) {
     val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(
-            feedPost,
-            LocalContext.current.applicationContext as Application
-        )
+        factory = viewModelFactory
     )
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
     val currentState = screenState.value
@@ -119,19 +117,19 @@ private fun CommentItem(
         Column {
             Text(
                 text = comment.authorName,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colors.onSecondary,
                 fontSize = 12.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = comment.commentText,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colors.onSecondary,
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = comment.publicationDate,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colors.onSecondary,
                 fontSize = 12.sp
             )
         }

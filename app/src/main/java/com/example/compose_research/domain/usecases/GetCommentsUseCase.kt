@@ -4,8 +4,9 @@ import com.example.compose_research.domain.entity.FeedPost
 import com.example.compose_research.domain.entity.PostComment
 import com.example.compose_research.domain.respository.NewsFeedRepository
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
-class GetCommentsUseCase(
+class GetCommentsUseCase @Inject constructor(
     private val repository: NewsFeedRepository
 ) {
 

@@ -6,15 +6,12 @@ import com.example.compose_research.data.repository.NewsFeedRepositoryImpl
 import com.example.compose_research.domain.entity.FeedPost
 import com.example.compose_research.domain.usecases.GetCommentsUseCase
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class CommentsViewModel(
-    feedPost: FeedPost,
-    application: Application
+class CommentsViewModel @Inject constructor(
+    private var feedPost: FeedPost,
+    private val getCommentsUseCase: GetCommentsUseCase
 ) : ViewModel() {
-
-    private val repository = NewsFeedRepositoryImpl(application)
-
-    private val getCommentsUseCase = GetCommentsUseCase(repository)
 
     val screenState = getCommentsUseCase(feedPost)
         .map {

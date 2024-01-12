@@ -2,11 +2,10 @@ package com.example.compose_research.presentation.news
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.compose_research.data.repository.NewsFeedRepositoryImpl
 import com.example.compose_research.domain.entity.FeedPost
 import com.example.compose_research.domain.entity.InstagramModel
 import com.example.compose_research.domain.usecases.ChangeLikeStatusUseCase
@@ -20,37 +19,32 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.random.Random
 
-class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
-
-
-
-    private val repository = NewsFeedRepositoryImpl(application)
-
-    private val getRecommendationsUseCase = GetRecommendationsUseCase(repository)
-    private val loadNextDataUseCase = LoadNextDataUseCase(repository)
-    private val changeLikeStatusUseCase = ChangeLikeStatusUseCase(repository)
-    private val deletePostUseCase = DeletePostUseCase(repository)
+class NewsFeedViewModel @Inject constructor(
+    private val getRecommendationsUseCase: GetRecommendationsUseCase,
+    private val loadNextDataUseCase: LoadNextDataUseCase,
+    private val changeLikeStatusUseCase: ChangeLikeStatusUseCase,
+    private val deletePostUseCase: DeletePostUseCase
+) : ViewModel() {
 
     private val recommendationFlow = getRecommendationsUseCase()
 
     private val loadNextDataFlow = MutableSharedFlow<NewsFeedScreenState>()
 
-    private val exceptionHandler = CoroutineExceptionHandler{_, _ ->
+    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
         Log.e("NewsFeedViewModel", "Exception caught by exceptionHandler")
     }
 
 
-    val screenState =   recommendationFlow
+    val screenState = recommendationFlow
         .filter { it.isNotEmpty() }
         .map {
             NewsFeedScreenState.Posts(posts = it) as NewsFeedScreenState
         }
         .onStart { emit(NewsFeedScreenState.Loading) }
         .mergeWith(loadNextDataFlow)
-
-
 
 
     fun loadNextRecommendations() {
@@ -62,13 +56,13 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
                     nextDataIsLoading = true
                 )
             )
-           loadNextDataUseCase()
+            loadNextDataUseCase()
         }
     }
 
     fun changeLikeStatus(feedPost: FeedPost) {
         viewModelScope.launch(exceptionHandler) {
-           changeLikeStatusUseCase(feedPost)
+            changeLikeStatusUseCase(feedPost)
 
             //после добавления лайка - получаем акутальную коллекцию
 
@@ -105,10 +99,11 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
 
     fun removeVKBloc(feedPost: FeedPost) {
         viewModelScope.launch(exceptionHandler) {
-           deletePostUseCase(feedPost)
+            deletePostUseCase(feedPost)
 
         }
     }
+
     fun delete(model: InstagramModel) {
         val modifiedList = _models.value?.toMutableList() ?: mutableListOf()
         modifiedList.remove(model)

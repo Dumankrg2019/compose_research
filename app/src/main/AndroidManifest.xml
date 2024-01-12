@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Compose_research"
+        android:name=".presentation.NewsFeedApplication"
         tools:targetApi="31">
         <activity
             android:name=".presentation.main.MainActivity"

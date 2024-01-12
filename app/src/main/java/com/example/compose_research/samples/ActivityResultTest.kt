@@ -1,7 +1,6 @@
 package com.example.compose_research.samples
 
 import android.net.Uri
-import android.widget.Button
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -9,9 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +50,7 @@ fun ActivityResultTest() {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Blue,
+                backgroundColor = Color.Blue,
                 contentColor = Color.White
             ),
             onClick = {

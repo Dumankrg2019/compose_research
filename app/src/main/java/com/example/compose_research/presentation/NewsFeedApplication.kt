@@ -8,12 +8,7 @@ import com.example.compose_research.domain.entity.FeedPost
 class NewsFeedApplication: Application() {
 
     val component: ApplicationComponent by lazy {
-       DaggerApplicationComponent.factory().create(
-           this,
-           FeedPost(0,0,"",
-               "", "", "", "", listOf(), false
-           )
-       )
+       DaggerApplicationComponent.factory().create(this)
     }
 
 }

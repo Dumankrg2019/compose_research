@@ -36,17 +36,21 @@ import coil.compose.AsyncImage
 import com.example.compose_research.R
 import com.example.compose_research.domain.entity.FeedPost
 import com.example.compose_research.domain.entity.PostComment
+import com.example.compose_research.presentation.NewsFeedApplication
 import com.example.compose_research.presentation.ViewModelFactory
 
 
 @Composable
 fun CommentsScreen(
-    viewModelFactory: ViewModelFactory,
     onBackPressed: () -> Unit,
     feedPost: FeedPost,
 ) {
+    val component = (LocalContext.current.applicationContext as NewsFeedApplication)
+        .component
+        .getCommentsScreenComponentFactory()
+        .create(feedPost)
     val viewModel: CommentsViewModel = viewModel(
-        factory = viewModelFactory
+        factory = component.getViewModelFactory()
     )
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
     val currentState = screenState.value

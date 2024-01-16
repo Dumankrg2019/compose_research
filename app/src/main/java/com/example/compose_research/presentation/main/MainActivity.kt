@@ -31,6 +31,7 @@ import com.example.compose_research.R
 import com.example.compose_research.domain.entity.AuthState
 import com.example.compose_research.presentation.NewsFeedApplication
 import com.example.compose_research.presentation.ViewModelFactory
+import com.example.compose_research.presentation.getApplicationComponent
 import com.example.compose_research.ui.theme.Compose_researchTheme
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
@@ -38,29 +39,25 @@ import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
 
-    private val component by lazy {
-        (application as NewsFeedApplication).component
-    }
 
     //private val viewModel by viewModels<NewsFeedViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
-        component.inject(this)
         super.onCreate(savedInstanceState)
         //val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         setContent {
+
+            val component = getApplicationComponent()
+            val viewModel: MainViewModel = viewModel(factory = component.getViewModelFactory())
+            val authState = viewModel.authState.collectAsState(AuthState.Initial)
+            val launcher = rememberLauncherForActivityResult(
+                contract = VK.getVKAuthActivityResultContract(),
+            ) {
+                viewModel.performAuthResult()
+            }
+
             Compose_researchTheme {
-                // A surface container using the 'background' color from the theme
-                val viewModel: MainViewModel = viewModel(factory = viewModelFactory)
-                val authState = viewModel.authState.collectAsState(AuthState.Initial)
-                val launcher = rememberLauncherForActivityResult(
-                    contract = VK.getVKAuthActivityResultContract(),
-                ) {
-                    viewModel.performAuthResult()
-                }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -73,7 +70,7 @@ class MainActivity : ComponentActivity() {
 
                     when(authState.value) {
                         is AuthState.Authorized -> {
-                            VkNewsMS(viewModelFactory) //MainScreen()
+                            VkNewsMS() //MainScreen()
                         }
                         is AuthState.NotAuthorized -> {
                             LoginScreen { launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS)) }

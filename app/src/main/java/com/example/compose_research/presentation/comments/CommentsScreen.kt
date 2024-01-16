@@ -24,6 +24,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +39,7 @@ import com.example.compose_research.domain.entity.FeedPost
 import com.example.compose_research.domain.entity.PostComment
 import com.example.compose_research.presentation.NewsFeedApplication
 import com.example.compose_research.presentation.ViewModelFactory
+import com.example.compose_research.presentation.getApplicationComponent
 
 
 @Composable
@@ -45,14 +47,25 @@ fun CommentsScreen(
     onBackPressed: () -> Unit,
     feedPost: FeedPost,
 ) {
-    val component = (LocalContext.current.applicationContext as NewsFeedApplication)
-        .component
+    val component = getApplicationComponent()
         .getCommentsScreenComponentFactory()
         .create(feedPost)
     val viewModel: CommentsViewModel = viewModel(
         factory = component.getViewModelFactory()
     )
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
+    CommentScreenContent(
+        screenState = screenState,
+        onBackPressed = onBackPressed
+    )
+}
+
+
+@Composable
+private fun CommentScreenContent(
+    screenState: State<CommentsScreenState>,
+    onBackPressed: () -> Unit,
+) {
     val currentState = screenState.value
     Log.e("comments", "comments show")
     if (currentState is CommentsScreenState.Comments) {
@@ -96,7 +109,6 @@ fun CommentsScreen(
         }
     }
 }
-
 @Composable
 private fun CommentItem(
     comment: PostComment

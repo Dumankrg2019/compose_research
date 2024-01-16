@@ -28,7 +28,7 @@ import com.example.compose_research.presentation.news.NewsFeedScreen
 
 @Composable
 fun VkNewsMS(
-    viewModelFactory: ViewModelFactory
+
 ) {
     val navigationState = rememberNavigationState()
 
@@ -65,7 +65,6 @@ fun VkNewsMS(
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
                 NewsFeedScreen(
-                    viewModelFactory = viewModelFactory,
                     paddingValues = paddingValues,
                     onCommentClickListener = {
                         navigationState.navigateToComments(it)
